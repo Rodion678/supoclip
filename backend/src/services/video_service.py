@@ -109,7 +109,7 @@ class VideoService:
     def determine_source_type(url: str) -> str:
         """Determine if source is YouTube or uploaded file."""
         video_id = get_youtube_video_id(url)
-        return "youtube" if video_id else "upload"
+        return "youtube" if video_id else "video_url"
 
     @staticmethod
     async def process_video_complete(
