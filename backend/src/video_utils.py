@@ -59,6 +59,7 @@ class VideoProcessor:
 
 def get_video_transcript(video_path: Path) -> str:
     """Get transcript using AssemblyAI with word-level timing for precise subtitles."""
+    video_path = Path(video_path)
     logger.info(f"Getting transcript for: {video_path}")
 
     # Configure AssemblyAI
@@ -133,6 +134,7 @@ def get_video_transcript(video_path: Path) -> str:
 
 def cache_transcript_data(video_path: Path, transcript) -> None:
     """Cache AssemblyAI transcript data for subtitle generation."""
+    video_path = Path(video_path)
     cache_path = video_path.with_suffix('.transcript_cache.json')
 
     # Store word-level data
@@ -158,6 +160,7 @@ def cache_transcript_data(video_path: Path, transcript) -> None:
 
 def load_cached_transcript_data(video_path: Path) -> Optional[Dict]:
     """Load cached AssemblyAI transcript data."""
+    video_path = Path(video_path)
     cache_path = video_path.with_suffix('.transcript_cache.json')
 
     if not cache_path.exists():
