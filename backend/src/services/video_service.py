@@ -61,7 +61,7 @@ class VideoService:
         Runs in thread pool to avoid blocking.
         """
         logger.info(f"Generating transcript for: {video_path}")
-        transcript = await run_in_thread(get_video_transcript, str(video_path))
+        transcript = await run_in_thread(get_video_transcript, video_path)
         logger.info(f"Transcript generated: {len(transcript)} characters")
         return transcript
 
