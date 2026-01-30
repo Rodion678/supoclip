@@ -53,7 +53,14 @@ class JobQueue:
             job_id: Unique ID for the enqueued job
         """
         pool = await cls.get_pool()
-        job = await pool.enqueue_job(function_name, *args, **kwargs)
+        from .tasks import WorkerSettings
+
+        job = await pool.enqueue_job(
+            function_name,
+            *args,
+            _queue_name=WorkerSettings.queue_name,
+            **kwargs
+        )
         logger.info(f"Enqueued job {job.job_id}: {function_name}")
         return job.job_id
 

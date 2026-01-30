@@ -95,18 +95,16 @@ class TaskRepository:
         }
 
         # Build dynamic query based on what's provided
-        query_parts = ["UPDATE tasks SET status = :status"]
+        set_parts = ["status = :status"]
 
         if progress is not None:
-            query_parts.append("progress = :progress")
+            set_parts.append("progress = :progress")
 
         if progress_message is not None:
-            query_parts.append("progress_message = :progress_message")
+            set_parts.append("progress_message = :progress_message")
 
-        query_parts.append("updated_at = NOW()")
-        query_parts.append("WHERE id = :task_id")
-
-        query = ", ".join(query_parts)
+        set_parts.append("updated_at = NOW()")
+        query = f"UPDATE tasks SET {', '.join(set_parts)} WHERE id = :task_id"
 
         await db.execute(text(query), params)
         await db.commit()
