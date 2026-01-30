@@ -94,7 +94,7 @@ class VideoService:
 
         clips_info = await run_in_thread(
             create_clips_with_transitions,
-            str(video_path),
+            video_path,
             segments,
             clips_output_dir,
             font_family,
