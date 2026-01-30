@@ -59,6 +59,7 @@ class VideoProcessor:
 
 def get_video_transcript(video_path: Path) -> str:
     """Get transcript using AssemblyAI with word-level timing for precise subtitles."""
+    video_path = Path(video_path)
     logger.info(f"Getting transcript for: {video_path}")
 
     # Configure AssemblyAI
@@ -133,6 +134,7 @@ def get_video_transcript(video_path: Path) -> str:
 
 def cache_transcript_data(video_path: Path, transcript) -> None:
     """Cache AssemblyAI transcript data for subtitle generation."""
+    video_path = Path(video_path)
     cache_path = video_path.with_suffix('.transcript_cache.json')
 
     # Store word-level data
@@ -158,6 +160,7 @@ def cache_transcript_data(video_path: Path, transcript) -> None:
 
 def load_cached_transcript_data(video_path: Path) -> Optional[Dict]:
     """Load cached AssemblyAI transcript data."""
+    video_path = Path(video_path)
     cache_path = video_path.with_suffix('.transcript_cache.json')
 
     if not cache_path.exists():
@@ -678,6 +681,21 @@ def create_clips_from_segments(video_path: Path, segments: List[Dict[str, Any]],
     logger.info(f"Successfully created {len(clips_info)}/{len(segments)} clips")
     return clips_info
 
+def _is_valid_transition_file(file_path: Path) -> bool:
+    """Validate that a transition file looks like an MP4 container."""
+    try:
+        if not file_path.exists() or file_path.stat().st_size < 16:
+            return False
+
+        with file_path.open("rb") as handle:
+            header = handle.read(64)
+
+        return b"ftyp" in header
+    except OSError as exc:
+        logger.warning(f"Failed to read transition file {file_path}: {exc}")
+        return False
+
+
 def get_available_transitions() -> List[str]:
     """Get list of available transition video files."""
     transitions_dir = Path(__file__).parent.parent / "transitions"
@@ -687,9 +705,12 @@ def get_available_transitions() -> List[str]:
 
     transition_files = []
     for file_path in transitions_dir.glob("*.mp4"):
-        transition_files.append(str(file_path))
+        if _is_valid_transition_file(file_path):
+            transition_files.append(str(file_path))
+        else:
+            logger.warning(f"Skipping invalid transition file: {file_path}")
 
-    logger.info(f"Found {len(transition_files)} transition files")
+    logger.info(f"Found {len(transition_files)} valid transition files")
     return transition_files
 
 def apply_transition_effect(clip1_path: Path, clip2_path: Path, transition_path: Path, output_path: Path) -> bool:

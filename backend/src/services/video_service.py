@@ -94,7 +94,7 @@ class VideoService:
 
         clips_info = await run_in_thread(
             create_clips_with_transitions,
-            str(video_path),
+            video_path,
             segments,
             clips_output_dir,
             font_family,
@@ -109,7 +109,7 @@ class VideoService:
     def determine_source_type(url: str) -> str:
         """Determine if source is YouTube or uploaded file."""
         video_id = get_youtube_video_id(url)
-        return "youtube" if video_id else "upload"
+        return "youtube" if video_id else "video_url"
 
     @staticmethod
     async def process_video_complete(
