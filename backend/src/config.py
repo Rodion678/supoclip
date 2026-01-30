@@ -6,7 +6,10 @@ load_dotenv()
 class Config:
     def __init__(self):
         self.whisper_model = os.getenv("WHISPER_MODEL", "base")
-        self.llm = os.getenv("LLM_MODEL", "google-gla:gemini-2.5-flash-lite")
+        self.llm = os.getenv(
+            "LLM_MODEL",
+            os.getenv("LLM", "google-gla:gemini-2.5-flash-lite")
+        )
         self.openai_api_key = os.getenv("OPENAI_API_KEY")
         self.anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
         self.google_api_key = os.getenv("GOOGLE_API_KEY")
